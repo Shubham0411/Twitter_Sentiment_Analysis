@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<configuration>
+  <!-- 
+  <property>
+    <name>dt.application.{appName}.operator.{opName}.prop.{propName}</name>
+    <value>some-default-value (if value is not specified, it is required from the user or custom config when launching)</value>
+  </property>
+  -->
+  <!-- memory assigned to app master
+  <property>
+    <name>dt.attr.MASTER_MEMORY_MB</name>
+    <value>1024</value>
+  </property>
+  -->
+  <!--
+  <property>
+    <name>dt.application.MyFirstApplication.operator.randomGenerator.prop.numTuples</name>
+    <value>1000</value>
+  </property>
+  <property>
+    <name>dt.application.MyFirstApplication.operator.console.prop.stringFormat</name>
+    <value>hello world: %s</value>
+  </property>
+   -->
+<property>
+  <name>dt.application.TweetsSentimentAnalysis.operator.Input.prop.directory</name>
+  <value>file:///home/shubham/myapps/twittersentiment-03/mydtapp/src/main/resources/META-INF/tweetsent_rawdata</value>
+</property>
+  <property>
+    <name>dt.application.TweetsSentimentAnalysis.operator.SentimentOutput.prop.filePath</name>
+    <value>file:///home/shubham/Desktop/</value>
+  </property>
+
+<property>
+  <name>dt.application.TweetsSentimentAnalysis.operator.SentimentAnalysis.prop.filePath</name>
+  <value>file:///home/shubham/myapps/twittersentiment-03/mydtapp/src/main/resources/META-INF/AFINN-111</value>
+</property>
+
+  <property>
+    <name>dt.loggers.level</name>
+    <value>com.datatorrent.*:INFO,org.apache.*:INFO,com.example.*:INFO,com.datatorrent.*:DEBUG,org.apache.*:DEBUG,com.example.*:DEBUG</value>
+  </property>
+
+
+</configuration>
