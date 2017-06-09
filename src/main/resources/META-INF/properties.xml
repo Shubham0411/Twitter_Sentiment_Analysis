@@ -24,17 +24,30 @@
    -->
 <property>
   <name>dt.application.TweetsSentimentAnalysis.operator.Input.prop.directory</name>
-  <value>file:///home/shubham/myapps/twittersentiment-03/mydtapp/src/main/resources/META-INF/tweetsent_rawdata</value>
+  <value>file:///home/shubham/myapps/twittersentiment-03/TwitterSentiment/src/main/resources/META-INF/tweetsent_rawdata</value>
 </property>
+
+
   <property>
     <name>dt.application.TweetsSentimentAnalysis.operator.SentimentOutput.prop.filePath</name>
     <value>file:///home/shubham/Desktop/</value>
   </property>
 
 <property>
-  <name>dt.application.TweetsSentimentAnalysis.operator.SentimentAnalysis.prop.filePath</name>
-  <value>file:///home/shubham/myapps/twittersentiment-03/mydtapp/src/main/resources/META-INF/AFINN-111</value>
+  <name>dt.application.TweetsSentimentAnalysis.operator.Filter.prop.wordsToFilterTweet</name>
+  <value>bad,good,happy</value>
 </property>
+
+
+  <property>
+    <name>dt.application.TweetsSentimentAnalysis.operator.Analyser.prop.filePath</name>
+    <value>/home/shubham/myapps/twittersentiment-03/TwitterSentiment/src/main/resources/META-INF/Tweets_Dataset</value>
+  </property>
+
+  <property>
+    <name>dt.application.TweetsSentimentAnalysis.operator.SentimentOutput.prop.outputProcessPath</name>
+    <value>/home/shubham/Documents/MyFile.txt</value>
+  </property>
 
   <property>
     <name>dt.loggers.level</name>
