@@ -22,10 +22,13 @@
     <value>hello world: %s</value>
   </property>
    -->
-<property>
-  <name>dt.application.TweetsSentimentAnalysis.operator.Input.prop.directory</name>
-  <value>file:///home/shubham/myapps/twittersentiment-03/TwitterSentiment/src/main/resources/META-INF/tweetsent_rawdata</value>
-</property>
+
+
+  <!--
+  <property>
+    <name>dt.application.TweetsSentimentAnalysis.operator.Input.prop.directory</name>
+    <value>file:///home/shubham/myapps/twittersentiment-03/TwitterSentiment/src/main/resources/META-INF/tweetsent_rawdata</value>
+  </property>
 
 
   <property>
@@ -33,11 +36,18 @@
     <value>file:///home/shubham/Desktop/</value>
   </property>
 
-<property>
-  <name>dt.application.TweetsSentimentAnalysis.operator.Filter.prop.wordsToFilterTweet</name>
-  <value>bad,good,happy</value>
-</property>
+  <property>
+    <name>dt.application.TweetsSentimentAnalysis.operator.SentimentOutput.prop.outputProcessPath</name>
+    <value>/home/shubham/Documents/MyFile.txt</value>
+  </property>
 
+-->
+
+
+  <property>
+    <name>dt.application.TweetsSentimentAnalysis.operator.Filter.prop.wordsToFilterTweet</name>
+    <value>bad</value>
+  </property>
 
   <property>
     <name>dt.application.TweetsSentimentAnalysis.operator.Analyser.prop.filePath</name>
@@ -45,8 +55,23 @@
   </property>
 
   <property>
-    <name>dt.application.TweetsSentimentAnalysis.operator.SentimentOutput.prop.outputProcessPath</name>
-    <value>/home/shubham/Documents/MyFile.txt</value>
+    <name>dt.application.TweetsSentimentAnalysis.operator.PositiveOutput.prop.filePath</name>
+    <value>file:///home/shubham/Desktop/PositiveSentiments.txt</value>
+  </property>
+
+  <property>
+    <name>dt.application.TweetsSentimentAnalysis.operator.PositiveOutput.prop.outputFileName</name>
+    <value>Positive.txt</value>
+  </property>
+
+  <property>
+    <name>dt.application.TweetsSentimentAnalysis.operator.NegativeOutput.prop.filePath</name>
+    <value>file:///home/shubham/Desktop/NegativeSentiments.txt</value>
+  </property>
+
+  <property>
+    <name>dt.application.TweetsSentimentAnalysis.operator.NegativeOutput.prop.outputFileName</name>
+    <value>Negative.txt</value>
   </property>
 
   <property>
