@@ -23,38 +23,57 @@ import com.datatorrent.common.util.BaseOperator;
  */
 public class TweetFilter extends BaseOperator
 {
-// Enter the particular word you want to search for in the tweet
-  String strFind1 = "bad";
+
 
   public static final Logger LOG = LoggerFactory.getLogger(TweetFilter.class);
 
-  public final transient DefaultInputPort<String> orginaltweet = new DefaultInputPort<String>()
+
+  public final transient DefaultInputPort<String> orginalTweetAtFilter = new DefaultInputPort<String>()
   {
     @Override
-    public void process(String unfilteredtweet)
+    public void process(String unfilteredTweetAtFilter)
     {
-      LOG.info("Unfiltered Tweet =>" + unfilteredtweet);
-      filter(unfilteredtweet);
+      LOG.info("Unfiltered Tweet =>" + unfilteredTweetAtFilter);
+      filter(unfilteredTweetAtFilter);
     }
   } ;
 
-  public final transient DefaultOutputPort<String> filteredtweet = new DefaultOutputPort<>();
 
-  public void filter(String unfilteredtweet)
-  {    String unfilteredtweet1 = unfilteredtweet.toLowerCase();
-    String [] unfiltweet = unfilteredtweet1.split(" ");
+
+  public final transient DefaultOutputPort<String> filteredOriginalTweetOutput = new DefaultOutputPort<>();
+
+  public String getWordsToFilterTweet()
+  {
+    return wordsToFilterTweet;
+  }
+  public void setWordsToFilterTweet(String wordsToFilterTweet)
+  {
+    this.wordsToFilterTweet = wordsToFilterTweet;
+  }
+
+
+  // Enter the particular word you want to search for in the tweet
+  private String wordsToFilterTweet;
+
+
+  public void filter(String unfilteredTweet)
+  {    String unfilteredTweet_LowerCase = unfilteredTweet.toLowerCase();
+    String [] unfilTweetInArray = unfilteredTweet_LowerCase.split(" ");
     boolean contains = false;
+    String[] wordsToFindArray = wordsToFilterTweet.split(",");
 
 //iterate the String array
-    for(int i=0; i < unfiltweet.length; i++){
+    for(int i=0; i < unfilTweetInArray.length; i++) {
 
-      //check if string array contains the string
-      if(unfiltweet[i].equals(strFind1)){
+      for (int j = 0; j < wordsToFindArray.length; j++) {
+        //check if string array contains the string
+        if (unfilTweetInArray[i].equals(wordsToFindArray[j])) {
 
-        //string found
-        contains = true;
-        break;
+          //string found
+          contains = true;
+          break;
 
+        }
       }
     }
 
@@ -62,9 +81,9 @@ public class TweetFilter extends BaseOperator
     //emits if the particular word is found in the tweet.
     if(contains == true ){
       // will be displayed in LOGS in GUI
-      String filtertweet = Arrays.toString(unfiltweet);
-      LOG.info("Filtered Tweet =>" + filtertweet);
-      filteredtweet.emit(unfilteredtweet);
+      String filterTweet = Arrays.toString(unfilTweetInArray);
+      LOG.info("Filtered Tweet =>" + filterTweet);
+      filteredOriginalTweetOutput.emit(unfilteredTweet);
     }
   }
 
