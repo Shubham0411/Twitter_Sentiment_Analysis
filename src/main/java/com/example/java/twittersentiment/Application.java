@@ -1,9 +1,6 @@
 package com.example.java.twittersentiment;
 
-import java.util.SortedMap;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.apex.malhar.lib.fs.GenericFileOutputOperator;
 
 import com.datatorrent.api.DAG;
 import com.datatorrent.api.StreamingApplication;
@@ -16,8 +13,7 @@ import com.datatorrent.api.annotation.ApplicationAnnotation;
 @ApplicationAnnotation(name="TweetsSentimentAnalysis")
 public class Application implements StreamingApplication
 {
-  public static final Logger LOG = LoggerFactory.getLogger(Application.class);
-  public SortedMap<String, Integer> afinnSentimentMap = null;
+
   @Override
   public void populateDAG(DAG dag, org.apache.hadoop.conf.Configuration conf)
   {
@@ -27,22 +23,30 @@ public class Application implements StreamingApplication
     TweetCleanser TweetCleanser = dag.addOperator("Cleanser", TweetCleanser.class);
 
     SentimentAnalyzer SentimentAnalysis = dag.addOperator("Analyser", SentimentAnalyzer.class);
-    SentimentDisplay SentimentOutput = dag.addOperator("SentimentOutput", SentimentDisplay.class);
+    //  SentimentDisplay SentimentOutput = dag.addOperator("SentimentOutput", SentimentDisplay.class);
+
+    GenericFileOutputOperator.StringFileOutputOperator positiveOutput = dag.addOperator("PositiveOutput", GenericFileOutputOperator.StringFileOutputOperator.class);
+    GenericFileOutputOperator.StringFileOutputOperator negativeOutput = dag.addOperator("NegativeOutput", GenericFileOutputOperator.StringFileOutputOperator.class);
 
     //sending tweets from TweetInput to TweetFilter
-    dag.addStream("sendilng inputs",Input.text,Filter.orginaltweet);
+    dag.addStream("sendilng inputs",Input.text,Filter.orginalTweetAtFilter);
 
     //sending filtered out tweets from TweetFilter to TweetCleanser
-    dag.addStream("sending filtered tweets", Filter.filteredtweet, TweetCleanser.originaltweet1);
+    dag.addStream("sending filtered tweets", Filter.filteredOriginalTweetOutput, TweetCleanser.originalTweetInputAtCleanser);
 
-     //sending original and cleaned tweet from TweetCleanser to SentimentAnalyzer
-    dag.addStream("sending orignal tweet", TweetCleanser.originaltweet, SentimentAnalysis.originaltweet_2);
-    dag.addStream("sending cleaned tweet", TweetCleanser.cleanedtweet, SentimentAnalysis.inputtweet1);
+    //sending original and cleaned tweet from TweetCleanser to SentimentAnalyzer
+    // dag.addStream("sending orignal tweet", TweetCleanser.originalTweetFromCleanser, SentimentAnalysis.originalTweetInputAtAnalyzer);
+    // dag.addStream("sending cleaned tweet", TweetCleanser.cleanedTweetFromCleanser, SentimentAnalysis.cleanTweetInputAtAnalyzer);
+    dag.addStream("sending data", TweetCleanser.output, SentimentAnalysis.input);
 
 
     //sending original tweet  and its sentiment value  from SentimentAnalyzer to SentimentDisplay
-    dag.addStream("sending original tweet", SentimentAnalysis.sendOriginaltweet_2, SentimentOutput.input);
-    dag.addStream("analysed tweet value", SentimentAnalysis.sentimentscore_2, SentimentOutput.sentimentscore1);
+    //  dag.addStream("sending original tweet", SentimentAnalysis.originalTweetOutputFromAnalyzer, SentimentOutput.input);
+    //  dag.addStream("analysed tweet value", SentimentAnalysis.sentimentValueFromAnalyzer, SentimentOutput.sentimentValue);
+
+    dag.addStream("positiveSentiment", SentimentAnalysis.positiveTweetOutputFromAnalyzer, positiveOutput.input);
+    dag.addStream("negativeSentiment", SentimentAnalysis.negativeTweetOutputFromAnalyzer, negativeOutput.input);
+
 
   }
 
