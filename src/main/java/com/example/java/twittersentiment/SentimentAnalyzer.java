@@ -30,85 +30,124 @@ import opennlp.tools.doccat.DocumentSampleStream;
 import opennlp.tools.util.ObjectStream;
 import opennlp.tools.util.PlainTextByLineStream;
 
-  public class SentimentAnalyzer extends BaseOperator {
-    public static final Logger LOG = LoggerFactory.getLogger(SentimentAnalyzer.class);
+public class SentimentAnalyzer extends BaseOperator {
 
-    public final transient DefaultOutputPort<String> sendOriginaltweet_2 = new DefaultOutputPort<>();
-    public final transient DefaultOutputPort<String> sentimentscore_2 = new DefaultOutputPort<>();
+  DataInAnalyzer dataInAnalyzer = new DataInAnalyzer();
 
-    public final transient DefaultInputPort<String> originaltweet_2 = new DefaultInputPort<String>()
+
+  public static final Logger LOG = LoggerFactory.getLogger(SentimentAnalyzer.class);
+
+
+
+  public final transient DefaultOutputPort<String> positiveTweetOutputFromAnalyzer = new DefaultOutputPort<>();
+  public final transient DefaultOutputPort<String> negativeTweetOutputFromAnalyzer = new DefaultOutputPort<>();
+
+
+  public final transient DefaultInputPort<Data> input = new DefaultInputPort<Data>()
+  {
+    @Override
+    public void process(Data data)
     {
-      @Override
-      public void process(String originaltweet_2)
-      {
-        sendOriginaltweet_2.emit(originaltweet_2);
-      }
-    };
+      classifyNewTweet(data);
+    }
+  };
 
 
-    public final transient DefaultInputPort<String> inputtweet1 = new DefaultInputPort<String>()
-    {
-      @Override
-      public void process(String refinedtweet_2)
-      {
-        classifyNewTweet(refinedtweet_2);
-      }
-    };
-
-    DoccatModel model;
+  DoccatModel model;
 
 
-    public void trainModel() {
-      InputStream dataIn = null;
-      try {
+  protected String filePath;
 
-        LOG.info("I have been called here.");
+  public String getFilePath()
+  {
+    return filePath;
+  }
+  public void setFilePath(String filePath)
+  {
+    this.filePath = filePath;
+  }
 
-        //this define where the file used for training the model is stored.
-        dataIn = new FileInputStream("/home/shubham/myapps/twittersentiment-03/mydtapp/src/main/resources/META-INF/tweets");
-        ObjectStream lineStream = new PlainTextByLineStream(dataIn, "UTF-8");
-        ObjectStream sampleStream = new DocumentSampleStream(lineStream);
-        // Specifies the minimum number of times a feature must be seen
-        int cutoff = 2;
-        int trainingIterations = 30;
-        model = DocumentCategorizerME.train("en", sampleStream, cutoff,
-          trainingIterations);
-      } catch (IOException e) {
-        e.printStackTrace();
-      } finally {
-        if (dataIn != null) {
-          try {
-            dataIn.close();
-          } catch (IOException e) {
-            e.printStackTrace();
-          }
+
+  public void trainModel() {
+    InputStream dataIn = null;
+    try {
+
+      LOG.info("I have been called here.");
+      //this define where the file used for training the model is stored.
+      dataIn = new FileInputStream(getFilePath());
+      ObjectStream lineStream = new PlainTextByLineStream(dataIn, "UTF-8");
+      ObjectStream sampleStream = new DocumentSampleStream(lineStream);
+      // Specifies the minimum number of times a feature must be seen
+      int cutoff = 2;
+      int trainingIterations = 30;
+      model = DocumentCategorizerME.train("en", sampleStream, cutoff,
+        trainingIterations);
+    } catch (IOException e) {
+      e.printStackTrace();
+    } finally {
+      if (dataIn != null) {
+        try {
+          dataIn.close();
+        } catch (IOException e) {
+          e.printStackTrace();
         }
       }
     }
+  }
 
 
+  public void classifyNewTweet(Data data) {
+    dataInAnalyzer.originalTweetInAnalyzer = data.originalTweetInCleanser;
+    dataInAnalyzer.cleanedTweetInAnalyzer = data.cleanedTweetInCleanser;
+    DocumentCategorizerME myCategorizer = new DocumentCategorizerME(model);
+    double[] outcomes = myCategorizer.categorize(dataInAnalyzer.cleanedTweetInAnalyzer);
+    String category = myCategorizer.getBestCategory(outcomes);
 
-    public void classifyNewTweet(String tweet) {
-      DocumentCategorizerME myCategorizer = new DocumentCategorizerME(model);
-      double[] outcomes = myCategorizer.categorize(tweet);
-      String category = myCategorizer.getBestCategory(outcomes);
+    if (category.equalsIgnoreCase("1")) {
 
-      if (category.equalsIgnoreCase("1")) {
-        System.out.println("The tweet is positive :) ");
-        String result = "positive";
-        sentimentscore_2.emit(result);
-      } else {
-        System.out.println("The tweet is negative :( ");
-        String result = "negative";
-        sentimentscore_2.emit(result);
-      }
-    }
-    @Override
-    public void setup(Context.OperatorContext context)
-    {
-      super.setup(context);
-      trainModel();
-      //    prepare1();
+      String result = "positive";
+      LOG.info("Tweet : Sentiment {} ==> {}", dataInAnalyzer.originalTweetInAnalyzer, result);
+      positiveAnalyzedOutputTweet(dataInAnalyzer.originalTweetInAnalyzer,result);
+
+    } else {
+
+      String result = "negative";
+      LOG.info("Tweet : Sentiment {} ==> {}", dataInAnalyzer.originalTweetInAnalyzer, result);
+
+
+      if(result=="positive")
+        positiveAnalyzedOutputTweet(dataInAnalyzer.originalTweetInAnalyzer,result);
+      else
+      negativeAnalyzedOutputTweet(dataInAnalyzer.originalTweetInAnalyzer,result);
     }
   }
 
+
+  public void positiveAnalyzedOutputTweet(String originalTweetInAnalyzer,String result)
+  {
+    String positiveTweetFromAnalyzer = originalTweetInAnalyzer + " ==>  " + result ;
+    positiveTweetOutputFromAnalyzer.emit(positiveTweetFromAnalyzer);
+  }
+
+
+  public void negativeAnalyzedOutputTweet(String originalTweetInAnalyzer,String result)
+  {
+    String negativeTweetFromAnalyzer = originalTweetInAnalyzer + " ==>  " + result ;
+    negativeTweetOutputFromAnalyzer.emit(negativeTweetFromAnalyzer);
+  }
+
+
+  @Override
+  public void setup(Context.OperatorContext context)
+  {
+    super.setup(context);
+    trainModel();
+  }
+}
+
+
+class DataInAnalyzer
+{
+  String originalTweetInAnalyzer;
+  String cleanedTweetInAnalyzer;
+}
