@@ -43,15 +43,16 @@ public class TweetCleanser extends BaseOperator
   };
 
   // will remove all the punctuations from a tweet
-  public Data punctuationRemover(String currTweet)
+  public void punctuationRemover(String currTweet)
   {
     //Remove all punctuation and new line chars in the tweet and converting into lowercase.
     String tweet = currTweet.replaceAll("\\p{Punct}|\\n", " ").toLowerCase();
     LOG.info("cleaned tweet  is --> " +tweet);
 
-    data.cleanedTweetInCleanser = tweet;
-    output.emit(data);
-    return data;
+    Data d = new Data();
+    d.cleanedTweetInCleanser = tweet;
+    output.emit(d);
+
   }
 
 
