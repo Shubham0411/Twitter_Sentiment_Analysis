@@ -1,5 +1,5 @@
 # Twitter Sentiment Analysis
-This code shows how to extend the AbstractFileInputOperator and GenericFileOutputOperator from [Malhar library] to create a high performance application to analyze the sentiments of the statements it receives.
+This code shows how to extend the `AbstractFileInputOperator` and `GenericFileOutputOperator` from [Malhar library] to create a high performance application to analyze the sentiments of the statements it receives.
 
 # Objective
 We will be doing sentiment analysis on data collected from the Twitter streaming API. In this we will search for tweets matching certain keywords using Filter Operator. Sentiment analysis lets us analyze what Twitter users think about the topics of their tweets
