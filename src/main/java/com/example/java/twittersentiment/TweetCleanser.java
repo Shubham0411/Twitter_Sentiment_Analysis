@@ -4,7 +4,7 @@ This class receives the tweet from TweetFilter
 and cleans the tweet by removing unwanted signs and
 urls from the tweet and then forwards both
 original (for reference)
-as well as cleaned tweet for further analysis.
+as well as cleaned tweet as POJO for further analysis.
  */
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -52,7 +52,6 @@ public class TweetCleanser extends BaseOperator
     Data d = new Data();
     d.cleanedTweetInCleanser = tweet;
     output.emit(d);
-
   }
 
 

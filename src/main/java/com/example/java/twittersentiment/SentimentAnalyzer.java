@@ -3,8 +3,8 @@ package com.example.java.twittersentiment;
 /*
 This class analyses the sentiment of a
 particular tweet using Naive Bayes Algorithm
-and forwards it to the SentimentDisplay class
- */
+by training the model using the given DATA SET
+and stores the output in HADOOP using GenericOutputFileWriter */
 
 
 /**
